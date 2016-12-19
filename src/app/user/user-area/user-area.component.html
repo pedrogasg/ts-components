@@ -1,0 +1,8 @@
+<div class="user-area__l-profile">
+  <img [attr.src]="domSanitizer.bypassSecurityTrustResourceUrl(userService.currentUser.pictureDataUri)" alt="User profile image">
+</div>
+<div class="user-area__l-information">
+  <p class="user-area__welcome-text">Hi {{userService.currentUser.name}}!</p>
+  <p *ngIf="openTasksCount !== 0">You got <strong>{{openTasksCount}}</strong> open tasks.</p>
+  <p *ngIf="openTasksCount === 0">No open tasks. Hooray!</p>
+</div>

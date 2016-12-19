@@ -1,0 +1,5 @@
+{
+  "globalDependencies": {
+    "pouchdb": "registry:dt/pouchdb#5.4.4+20160724064500"
+  }
+}

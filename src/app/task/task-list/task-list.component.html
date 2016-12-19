@@ -1,0 +1,18 @@
+<div class="task-list__l-container">
+    <div class="task-list__l-box-a">
+    <app-toggle [buttonList]="taskFilterList"
+                [(selectedButton)]="selectedTaskFilter"></app-toggle>
+  </div>
+<div class="task-list__l-box-b">
+<app-enter-task (taskEntered)="addTask($event)"></app-enter-task><br />
+</div>
+  <div class="task-list__l-box-c">
+    <div class="task-list__tasks">
+        <app-task *ngFor="let task of filteredTasks" [title]="task.title"
+                [done]="task.done"
+                (taskUpdated)="onTaskUpdated(task, $event)"
+                (taskDeleted)="onTaskDeleted(task)">
+        </app-task>
+    </div>
+</div>
+</div>
