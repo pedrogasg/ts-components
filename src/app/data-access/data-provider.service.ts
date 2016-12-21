@@ -37,7 +37,7 @@ export class DataProvider {
       {title: 'Task E', done: false}
     ]
   }
-]
+];
 
     this.db = new PouchDB('angular-2-components');
     this.initialized = this.db.info().then(info => this.zone.run(() => {
@@ -49,7 +49,7 @@ export class DataProvider {
     .catch(error => {
       console.error('Error while inserting initial data. Please evaluate the error message and contact author if the error is persistent.');
       throw error;
-    });;
+    });
       } else {
         console.log(`Found existing database with ${info.doc_count} documents.`);
       }
@@ -104,9 +104,15 @@ export class DataProvider {
 
   createOrUpdateDocument(document) {
     return this.initialized.then(() => {
-      return this.db.put(document)
-        .then((response) => this.zone.run(() => response))
-        .catch(error => this.zone.run(() => { throw error }));
+      if (document._id) {
+        return this.db.put(document)
+          .then((response) => this.zone.run(() => response))
+          .catch(error => this.zone.run(() => { throw error; }));
+      } else {
+        return this.db.post(document)
+          .then((response) => this.zone.run(() => response))
+          .catch(error => this.zone.run(() => { throw error; }));
+      }
     });
   }
 }

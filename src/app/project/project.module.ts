@@ -7,8 +7,10 @@ import { TabsComponent } from '../tabs';
 import { ToggleComponent, CheckboxComponent, EditorComponent  } from '../ui';
 import { TaskListComponent, TaskComponent, EnterTaskComponent, TaskService } from '../task';
 import { CommentsComponent, CommentComponent } from '../comments';
-import { FromNowPipe } from '../pipes';
+import { FromNowPipe, CalendarTimePipe } from '../pipes';
 import { ProjectCommentsComponent } from './project-comments/project-comments.component';
+import { ProjectActivitiesComponent } from './project-activities/project-activities.component';
+import { ActivitiesComponent, ActivityService, ActivitySliderComponent, ActivityComponent } from '../activities';
 
 
 @NgModule({
@@ -28,11 +30,17 @@ import { ProjectCommentsComponent } from './project-comments/project-comments.co
     CommentComponent,
     CommentsComponent,
     FromNowPipe,
+    CalendarTimePipe,
     ProjectTasksComponent,
-    ProjectCommentsComponent
+    ProjectCommentsComponent,
+    ProjectActivitiesComponent,
+    ActivitiesComponent,
+    ActivitySliderComponent,
+    ActivityComponent
   ],
   providers: [
-    TaskService
+    TaskService,
+    ActivityService
   ],
 })
 export class ProjectModule {}

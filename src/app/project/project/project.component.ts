@@ -76,7 +76,8 @@ export class ProjectComponent implements OnInit, OnDestroy {
     });
     this.tabItems = [
       {title: 'Tasks', link: 'tasks'},
-      {title: 'Comments', link: 'comments'}
+      {title: 'Comments', link: 'comments'},
+      {title: 'Activities', link: 'activities'}
     ];
   }
   ngOnInit() {

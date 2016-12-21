@@ -1,7 +1,7 @@
 <ul class="tabs__tab-list">
   <li *ngFor="let tab of items">
     <a class="tabs__tab-button"
-
+            routerLinkActive="tabs__tab-button--active"
             [routerLink]="tab.link">{{tab.title}}</a>
   </li>
 </ul>

@@ -9,10 +9,10 @@ import {
   Input,
   OnChanges,
   Output,
-  ViewEncapsulation, Inject, forwardRef, OnInit
+  ViewEncapsulation
 } from '@angular/core';
-import {ProjectComponent} from '../../project';
-
+import {ActivityService} from '../../activities';
+import { limitWithEllipsis } from '../../utilities/string-utilities';
 @Component({
   selector: 'app-task-list',
   templateUrl: 'task-list.component.html',
@@ -24,14 +24,14 @@ import {ProjectComponent} from '../../project';
 export class TaskListComponent implements OnChanges {
 @Input() tasks;
 @Output() tasksUpdated = new EventEmitter<any>();
-
+@Input() activitySubject;
 @HostBinding('attr.class') class = 'task-list';
 
 
 taskFilterList: string[];
 selectedTaskFilter: string;
 filteredTasks: any[];
-  constructor() {
+  constructor(private activityService: ActivityService) {
     this.taskFilterList = ['all', 'open', 'done'];
     this.selectedTaskFilter = 'all';
    }
@@ -54,13 +54,26 @@ filteredTasks: any[];
   }
   onTaskDeleted(task) {
     const tasks = this.tasks.slice();
-    tasks.splice(this.tasks.indexOf(task), 1);
+    let removed =  tasks.splice(this.tasks.indexOf(task), 1)[0];
     this.tasksUpdated.next(tasks);
+    this.activityService.logActivity(
+      this.activitySubject.id,
+      'tasks',
+      'A task was deleted',
+      `The task "${limitWithEllipsis(removed.title, 30)}" was deleted from ${this.activitySubject.document.data._id}.`
+    );
   }
-  onTaskUpdated(task, taskData) {
+  onTaskUpdated(task, updatedData) {
     const tasks = this.tasks.slice();
-    tasks.splice(this.tasks.indexOf(task), 1, taskData);
+    let oldTask = tasks.splice(tasks.indexOf(task), 1, Object.assign({}, task, updatedData))[0];
+    console.log(oldTask);
     this.tasksUpdated.next(tasks);
+    this.activityService.logActivity(
+      this.activitySubject.id,
+      'tasks',
+      'A task was updated',
+      `The task "${limitWithEllipsis(oldTask.title, 30)}" was updated on #${this.activitySubject.document.data._id}.`
+    );
   }
   taskFilterChange(filter) {
     this.selectedTaskFilter = filter;
@@ -74,5 +87,11 @@ filteredTasks: any[];
       done: false
     });
     this.tasksUpdated.next(tasks);
+    this.activityService.logActivity(
+      this.activitySubject.id,
+      'tasks',
+      'A task was added',
+      `A new task "${limitWithEllipsis(title, 30)}" was added to ${this.activitySubject.document.data._id}.`
+    );
    }
 }

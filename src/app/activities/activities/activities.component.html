@@ -1,0 +1,11 @@
+<app-activity-slider [activities]="activities"
+                     (selectionChange)="onSelectionChange($event)">>
+</app-activity-slider>
+<div class="activities__l-container">
+  <app-activity *ngFor="let activity of selectedActivities, let index = index"
+                [activity]="activity"
+                [alignment]="getAlignment(index)"
+                [startMark]="isLast(index)"
+                [endMark]="isFirst(index)">
+  </app-activity>
+</div>

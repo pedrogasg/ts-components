@@ -10,6 +10,8 @@ import {
   Output,
   ViewChild
 } from '@angular/core';
+import {ActivityService} from '../../activities';
+import { limitWithEllipsis } from '../../utilities/string-utilities';
 
 @Component({
   selector: 'app-comments',
@@ -22,7 +24,8 @@ export class CommentsComponent implements OnChanges {
   @Output() commentsUpdated = new EventEmitter();
   @ViewChild(EditorComponent) newCommentEditor;
   @Input() comments: any[];
-  constructor(private userService: UserService) {
+  @Input() activitySubject;
+  constructor(private userService: UserService, private activityService: ActivityService) {
   }
 
   ngOnChanges(changes) {
@@ -33,31 +36,44 @@ export class CommentsComponent implements OnChanges {
 
   addNewComment() {
     const comments = this.comments.slice();
+    const content = this.newCommentEditor.getEditableContent();
     comments.splice(0, 0, {
       user: this.userService.currentUser,
       time: +new Date(),
-      content: this.newCommentEditor.getEditableContent()
+      content: content
     });
 
     this.commentsUpdated.next(comments);
 
     this.newCommentEditor.setEditableContent('');
+    this.activityService.logActivity(
+      this.activitySubject.id,
+      'comments',
+      'New comment was added',
+      `The comment "${limitWithEllipsis(content, 30)}" was added to #${this.activitySubject.document.data._id}`
+    );
   }
 
   onCommentEdited(comment, content) {
     const comments = this.comments.slice();
-
+    let oldComment: any, action: string;
     if (content.length === 0) {
-      comments.splice(comments.indexOf(comment), 1);
+      action = 'Comment edited';
+      oldComment = comments.splice(comments.indexOf(comment), 1)[0];
     } else {
-
-      comments.splice(comments.indexOf(comment), 1, {
+      action = 'Comment deleted';
+      oldComment = comments.splice(comments.indexOf(comment), 1, {
         user: comment.user,
         time: comment.time,
         content
-      });
+      })[0];
     }
-
+    this.activityService.logActivity(
+      this.activitySubject.id,
+      'comments',
+      action,
+      `The comment "${limitWithEllipsis(oldComment.content, 30)}" on #${this.activitySubject.document.data._id} was edited.`
+    );
     this.commentsUpdated.next(comments);
   }
 }
